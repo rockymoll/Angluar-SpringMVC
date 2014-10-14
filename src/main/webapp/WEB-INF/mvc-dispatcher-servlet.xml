@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <context:component-scan base-package="com.ea"/>
+
+    <mvc:annotation-driven/>
+
+    <bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+
+    <bean id="liftService" class="com.ea.service.LiftServiceImpl"/>
+    <bean id="liftController" class="com.ea.controller.LiftController">
+        <property name="liftService" ref="liftService" />
+    </bean>
+    <bean id="lift" class="com.ea.model.Lift"/>
+    <bean id="liftHelper" class="com.ea.service.LiftWorker"/>
+
+
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.ea.model" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.show_sql" >false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:./LiftDB" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
+    <task:executor id="myExecutor" pool-size="1"/>
+    <task:scheduler id="myScheduler" pool-size="1"/>
+
+    <tx:annotation-driven />
+
+    <bean id="persistenceExceptionTranslationPostProcessor"
+          class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+</beans>

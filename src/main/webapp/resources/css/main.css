@@ -1,0 +1,29 @@
+#container {
+    margin: auto;
+}
+
+#container tr {
+    height: 60px;
+}
+
+#container #lifts td {
+    min-width: 150px;
+}
+
+#first {
+    width: 30%;
+    float: left;
+    height: 300px;
+}
+#second {
+    width: 70%;
+    float: left;
+    height: 300px;
+}
+#clear {
+    clear: both;
+}
+
+.peopleInput {
+    width: 50px;
+}
